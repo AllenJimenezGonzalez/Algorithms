@@ -1,16 +1,23 @@
 package ArraysAndStringsChapter;
 
 public class URLify {
-    public String getUrlFied(String url){
-         StringBuilder stringBuilder = new StringBuilder();
-         String [] splittedList = url.split(" ");
-         for(String s: splittedList){
-             stringBuilder.append(s);
-             if(!s.equals(splittedList[splittedList.length-1])){
-                 stringBuilder.append("%20");
-             }
+    public static String urlify(String originalUrl){
+        char [] result = new char[originalUrl.length()*3];
+        int arrayIndex = 0;
+        for (int i = 0; i < originalUrl.toCharArray().length; i++,arrayIndex++) {
+            if(originalUrl.charAt(i) == ' '){
+                result[arrayIndex] = '%';
+                result[arrayIndex+1]='2';
+                result[arrayIndex+2]='0';
+                arrayIndex+=2;
+            }else{
+                result[arrayIndex] = originalUrl.charAt(i);
+            }
+        }
+        return String.valueOf(result).substring(0,arrayIndex);
+    }
 
-         }
-         return stringBuilder.toString();
+    public static void main(String[] args) {
+        System.out.println(urlify("Hola Testing url"));
     }
 }

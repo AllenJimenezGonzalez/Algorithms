@@ -1,38 +1,40 @@
 package ArraysAndStringsChapter;
 
+import java.util.Arrays;
+
 public class ZeroMatrix {
 
-    public int [][] getZeroMatrix(int [][] matrix){
-        RotateMatrix rotateMatrix = new RotateMatrix();
-        rotateMatrix.printMatrix(matrix);
-        boolean flag = false;
-        for (int i = 0; i < matrix.length; i++) {
-            for (int i1 = 0; i1 < matrix[i].length; i1++) {
+    public static int [][] zeroMatrix(int [][] matrix){
+        int [][] res = new int[matrix.length][matrix[0].length];
 
-                if(matrix[i][i1] == 0){
+        for (int[] re : res) {
+            Arrays.fill(re,-1);
+        }
 
-                    int xSize = matrix.length;
-                    int ySize = matrix[i].length;
-                    
-                    for (int ix = 0; ix<xSize;ix++){
-                        matrix[ix][i1] = 0;
+        for (int x = 0; x < matrix.length; x++) {
+            for (int y = 0; y < matrix[x].length; y++) {
+                if(res[x][y] == -1) res[x][y] = matrix[x][y];
+                if(matrix[x][y] == 0){
+                    for(int xIndex = 0;xIndex< matrix.length; xIndex++){
+                        res[xIndex][y] = 0;
                     }
-                    
-                    for (int iy = 0; iy<ySize;iy++){
-                        matrix[i][iy] = 0;
-
+                    for(int yIndex = 0;yIndex< matrix[x].length; yIndex++){
+                        res[x][yIndex] = 0;
                     }
-                    flag = true;
-                    break;
                 }
             }
-            if(flag){
-                break;
-            }
         }
-        System.out.println("");
-        rotateMatrix.printMatrix(matrix);
-        return matrix;
+
+        return res;
+    }
+
+    public static void main(String[] args) {
+        int [][] dataZero = new int [][]{
+                {0,2,3,4},
+                {5,6,7,0},
+                {9,10,11,12},
+                {13,14,15,16}};
+        System.out.println(Arrays.deepToString(zeroMatrix(dataZero)));
     }
 
 }

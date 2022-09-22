@@ -2,31 +2,31 @@ package ArraysAndStringsChapter;
 
 public class StringCompression {
 
-    public String getCompressedString(String val){
-        StringBuilder lastValue = new StringBuilder();
+    public static String stringCompression(String originalString){
 
-        char [] lettersArray = val.toCharArray();
-        char actualChar = '.';
-        int counter = 0;
-        for (char c : lettersArray) {
-            if(actualChar == '.'){
-                actualChar = c;
-            }
+        StringBuilder sb = new StringBuilder();
+        int counter = 1;
+        char lastChar = originalString.charAt(0);
 
-            if(c != actualChar){
-                lastValue.append(actualChar);
-                lastValue.append(counter);
-                counter = 1;
-                actualChar = c;
-            }else{
+        for (int i = 1; i < originalString.toCharArray().length; i++) {
+            if(lastChar!=originalString.charAt(i)){
+                sb.append(lastChar);
+                sb.append(counter);
+                counter=1;
+                lastChar = originalString.charAt(i);
+            }else {
                 counter++;
             }
-
+            if(i == originalString.length()-1){
+                sb.append(lastChar);
+                sb.append(counter);
+            }
         }
-        lastValue.append(actualChar);
-        lastValue.append(counter);
+        return sb.toString().length()>originalString.length()?originalString:sb.toString();
+    }
 
-        return lastValue.toString();
+    public static void main(String[] args) {
+        System.out.println(stringCompression("aaabbcnnnnnnc"));
     }
 
 }

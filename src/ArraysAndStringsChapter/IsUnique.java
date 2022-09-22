@@ -1,25 +1,19 @@
 package ArraysAndStringsChapter;
 
 public class IsUnique {
-    public String evaluateString = "SAB";
-
-    public boolean isAllLettersUnique(String evaluateString){
-        String [] splittedString = evaluateString.split("");
-
-        for(int x = 0; x < splittedString.length;x++){
-            if(splittedString.length >=2){
-                for(int y = x+1; y < splittedString.length; y++ ){
-                    if(splittedString[x].equals(splittedString[y])){
-                        return false;
-                    }
-                }
-            }else{
-                return true;
-            }
-
+    public static boolean isUnique(String value){
+        int [] letters = new int[128];
+        for (char c : value.toLowerCase().toCharArray()){
+            letters[c]++;
+            if(letters[c]>1) return false;
         }
         return true;
     }
 
+    public static void main(String [] args) {
+        System.out.println(isUnique("ad$"));
+        System.out.println(isUnique("un camello un dia me dijo algo"));
+        System.out.println(isUnique("abcdefghijkm n l o p q  yz "));
+    }
 }
 
