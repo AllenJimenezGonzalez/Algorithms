@@ -5,86 +5,89 @@ import java.util.Stack;
 
 public class StackMin {
     public static void main(String [] args){
-        StackCustom sc = new StackCustom();
+        StackCustom<Integer> sc = new StackCustom<>();
 
-        sc.push(5);
-        sc.push(9);
-        sc.push(29);
-        sc.push(98);
+        sc.push(1);
+        sc.push(1000);
         sc.push(2);
-        System.out.println(sc.min());
-        System.out.println(sc.pop().value);
-        System.out.println(sc.min());
+        sc.push(3);
+        sc.push(0);
+        sc.push(5);
 
-        sc.push(2290);
-        sc.push(233333);
+        System.out.println(sc.getMin().getValue());
+        System.out.println(sc.pop().getValue());
+        System.out.println(sc.getMin().getValue());
+
     }
 }
 
-class StackCustom extends Stack<StackNode>{
-    public StackCustom() {
-        super();
-    }
+class StackCustom<type> {
+    CustomStackNodeMin<type> head = null;
+    CustomStackNodeMin<type> last = null;
 
-    public StackNode push(int value) {
-        StackNode item = new StackNode(value);
-        if(!empty()) {
-            item.minValue = Math.min(peek().minValue, item.value);
-        }else{
-            item.minValue = value;
+    public CustomStackNodeMin<type> push(type elem){
+        CustomStackNodeMin<type> csnm = new CustomStackNodeMin<>(elem);
+        if(head == null){
+            csnm.minElement = csnm;
+            head = csnm;
+            last = csnm;
+            return csnm;
         }
-        return super.push(item);
+        last.nextNode = csnm;
+        if ((int) csnm.getValue() < (int) last.minElement.getValue()) csnm.minElement = csnm;
+        else csnm.minElement = last.minElement;
+        csnm.previousNode = last;
+        last = csnm;
+        return csnm;
     }
 
-    @Override
-    public synchronized StackNode pop() {
-        return super.pop();
+    public CustomStackNodeMin<type> pop(){
+        CustomStackNodeMin<type> res = last;
+        last = (CustomStackNodeMin<type>) last.previousNode;
+        return res;
     }
 
-    @Override
-    public synchronized StackNode peek() {
-        return super.peek();
+    public CustomStackNodeMin<type> peek(){
+        return last;
     }
 
-    @Override
-    public boolean empty() {
-        return super.empty();
+    public boolean isEmpty(){
+        return head == null;
     }
 
-    @Override
-    public synchronized int search(Object o) {
-        return super.search(o);
-    }
-
-    public int min(){
-        return peek().minValue;
-    }
-}
-
-class StackNode{
-    int value;
-    int minValue;
-
-    public StackNode(){}
-
-    public StackNode(int value){
-        this.value = value;
-    }
-
-    public int getValue() {
-        return value;
-    }
-
-    public void setValue(int value) {
-        this.value = value;
-    }
-
-    public int getMinValue() {
-        return minValue;
-    }
-
-    public void setMinValue(int minValue) {
-        this.minValue = minValue;
+    public CustomStackNodeMin<type> getMin(){
+        return last.minElement;
     }
 }
 
+class CustomStackNode<type> {
+    private type value;
+    public CustomStackNode<type> nextNode = null;
+    public CustomStackNode<type> previousNode = null;
+    public CustomStackNode(){}
+    public CustomStackNode(type value){
+        this.value = value;
+    }
+    public type getValue(){
+        return this.value;
+    }
+    public void setValue(type value){
+        this.value = value;
+    }
+}
+
+class CustomStackNodeMin<type> extends CustomStackNode<type>{
+
+    public CustomStackNodeMin<type> minElement;
+
+    public CustomStackNodeMin(){
+    }
+
+    public CustomStackNodeMin(type value){
+        super(value);
+    }
+    public CustomStackNodeMin(type value,CustomStackNodeMin<type> minElement){
+        super(value);
+        this.minElement = minElement;
+    }
+}

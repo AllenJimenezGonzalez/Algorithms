@@ -1,62 +1,112 @@
 package TreesAndGraphsChapter;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
-public class Graph{
-    public HashMap<String,Node> nodes;
+public class Graph<T> {
 
-    public Graph(){
-        nodes = new HashMap<>();
-    }
+    GraphNode<T> rootNode;
+    public GraphNode<T> lastNode;
+    public GraphArc<T> lastArc;
 
-    public boolean insertNode(String id){
-        if (!nodes.containsKey(id)){
-            nodes.put(id,new Node(id));
-            return true;
+
+    public boolean addNode(T value){
+        GraphNode<T> nGn = new GraphNode<>(value);
+        if(rootNode == null){
+            lastNode = nGn;
+            rootNode = nGn;
         }
-        return false;
+
+        lastNode.nextNode = nGn;
+        nGn.prevNode = lastNode;
+        lastNode = nGn;
+
+        return true;
     }
 
-    public boolean insertArc(String origin,String destiny){
-        if(nodes.containsKey(origin) && nodes.containsKey(destiny)){
-            Node originNode = nodes.get(origin);
-            if(!originNode.arcs.containsKey(destiny)){
-                originNode.arcs.put(destiny,nodes.get(destiny));
-                return true;
+    public boolean addArc(T value,T originNode,T destinationNode,boolean directed){
+        GraphNode<T> oNode = searchNode(originNode);
+        GraphNode<T> dNode = searchNode(destinationNode);
+        if (oNode == null || dNode == null) return false;
+        addArc(value,oNode,dNode);
+        if(directed){
+            addArc(value,dNode,oNode);
+        }
+        return true;
+    }
+
+    private void addArc(T value,GraphNode<T> oNode,GraphNode<T> dNode ){
+        GraphArc<T> newArc = new GraphArc<T>(value,oNode,dNode);
+        if(oNode.arcs == null) oNode.arcs = newArc;
+        else{
+            newArc.prevArc = lastArc;
+            lastArc.nextArc = newArc;
+        }
+        lastArc = newArc;
+    }
+
+
+    public GraphArc<T> removeArc(T originNode,T destinationNode){
+        GraphArc<T> sArc = searchArc(originNode,destinationNode);
+        if(sArc == null) return null;
+        if(sArc.prevArc == null){
+            GraphNode<T> node = searchNode(originNode);
+            node.arcs = sArc.nextArc;
+            return sArc;
+        }
+        sArc.prevArc = sArc.nextArc;
+        return sArc;
+    }
+
+    public GraphNode<T> searchNode(T value){
+        GraphNode<T> aux = rootNode;
+        while (aux != null){
+            if(aux.value.equals(value)) return aux;
+            aux = aux.nextNode;
+        }
+        return null;
+    }
+
+    public GraphArc<T> searchArc(T originNode,T destinationNode){
+        GraphNode<T> oNode = searchNode(originNode);
+        GraphNode<T> dNode = searchNode(destinationNode);
+        if(oNode == null || dNode == null) return null;
+        GraphArc<T> auxArc = oNode.arcs;
+        while (auxArc!=null){
+            if(auxArc.destinationNode == dNode){
+                return auxArc;
             }
+            auxArc = auxArc.nextArc;
         }
-        return false;
-    }
-
-    public boolean isRoute(String origin,String destiny){
-        if(nodes.containsKey(origin) && nodes.containsKey(destiny)){
-            return nodes.get(origin).arcs.containsKey(destiny);
-        }
-        return false;
+        return null;
     }
 
 }
 
-class Node{
-    public String id;
-    public String value;
-    public HashMap<String,Node> arcs;
-    public boolean visited;
+class GraphNode<T>{
+    public T value;
+    public GraphArc<T> arcs;
+    public GraphNode<T> nextNode;
+    public GraphNode<T> prevNode;
 
-    public Node(){
-        arcs = new HashMap<>();
-    }
-
-    public Node(String id){
-        this.id = id;
-        arcs = new HashMap<>();
-    }
-
-    public Node(String id, String value, boolean visited) {
-        this.id = id;
+    public GraphNode (T value){
         this.value = value;
-        this.visited = visited;
-        arcs = new HashMap<>();
+    }
+}
+
+class GraphArc<T>{
+    public T value;
+    public GraphArc<T> nextArc;
+    public GraphArc<T> prevArc;
+    public GraphNode<T> originNode;
+    public GraphNode<T> destinationNode;
+
+    public GraphArc(){}
+
+    public GraphArc(T value,GraphNode<T> originNode,GraphNode<T> destinationNode){
+        this.value = value;
+        this.originNode = originNode;
+        this.destinationNode = destinationNode;
     }
 }

@@ -3,69 +3,80 @@ package StacksAndQueueChapter;
 import java.util.LinkedList;
 
 public class AnimalShelter {
-    LinkedList<Animal> animals = new LinkedList<>();
+    LinkedList<Dog> dogs = new LinkedList<>();
+    LinkedList<Cat> cats = new LinkedList<>();
+    int actualOrder = -1;
 
     public void enqueue (Animal animal){
-        animals.add(animal);
+        animal.order = ++actualOrder;
+        if(animal.type == 'c') cats.add((Cat) animal);
+        else dogs.add((Dog) animal);
     }
+
     public Animal dequeueAny(){
-        return animals.remove();
-    }
-
-    public Animal dequeueCat(){
-        for (int i = 0; i < animals.size(); i++) {
-            if(animals.get(i) instanceof Cat){
-                return animals.remove(i);
+        if(dogs.size() == 0 && cats.size() == 0) return null;
+        else{
+            if(dogs.size() == 0) return cats.pop();
+            else if(cats.size() == 0) return dogs.pop();
+            else{
+                return dogs.peekFirst().order < cats.peekFirst().order? dogs.pollFirst(): cats.pollFirst();
             }
         }
-        return null;
     }
 
-    public Animal dequeueDog(){
-        for (int i = 0; i < animals.size(); i++) {
-            if(animals.get(i) instanceof Dog){
-                return animals.remove(i);
-            }
-        }
-        return null;
+    public Cat dequeueCat(){
+        if(cats.size() == 0) return null;
+        return cats.pollFirst();
+    }
+
+    public Dog dequeueDog(){
+        if(dogs.size() == 0) return null;
+        return dogs.pollFirst();
+    }
+
+    void print(){
+        cats.forEach(cat -> System.out.print(cat.order + "-"));
+        System.out.println("\n");
+        dogs.forEach(dog -> System.out.print(dog.order+"-"));
+        System.out.println("\n");
     }
 
     public static void main(String [] args){
 
         AnimalShelter animalShelter = new AnimalShelter();
-        animalShelter.enqueue(new Dog(1));
-        animalShelter.enqueue(new Cat(740));
-        animalShelter.enqueue(new Dog(2));
-        animalShelter.enqueue(new Dog(3));
-        animalShelter.enqueue(new Dog(4));
-        animalShelter.enqueue(new Cat(8990));
-
-        System.out.println(animalShelter.dequeueAny().type);
-        Cat a = (Cat) animalShelter.dequeueCat();
-        System.out.println(a.id );
-        Cat a1 = (Cat) animalShelter.dequeueCat();
-        System.out.println(a1.id );
+        animalShelter.enqueue(new Dog());
+        animalShelter.enqueue(new Cat());
+        animalShelter.enqueue(new Dog());
+        animalShelter.enqueue(new Dog());
+        animalShelter.enqueue(new Dog());
+        animalShelter.enqueue(new Cat());
+        animalShelter.print();
+        System.out.println(animalShelter.dequeueAny().toString());
+        System.out.println(animalShelter.dequeueAny().toString());
+        System.out.println(animalShelter.dequeueCat().toString());
+        System.out.println(animalShelter.dequeueDog().toString());
     }
 }
 
 class Animal{
     public char type;
+    public int order;
+    public String toString(){
+        return type + " " + order;
+    }
 }
 
 class Dog extends Animal {
-    public int id;
-    public Dog(int id){
+    public Dog(){
         super();
         this.type = 'd';
-        this.id = id;
     }
 }
 
 class Cat extends Animal{
-    public int id;
-    public Cat(int id){
+
+    public Cat(){
         super();
         this.type = 'c';
-        this.id = id;
     }
 }

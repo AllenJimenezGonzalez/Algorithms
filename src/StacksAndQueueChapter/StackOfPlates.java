@@ -1,124 +1,83 @@
 package StacksAndQueueChapter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Stack;
 
 public class StackOfPlates{
     public static void main(String [] args){
-        StackOfPlatesStruct stackOfPlatesStruct = new StackOfPlatesStruct(3);
-        stackOfPlatesStruct.push(2);
-        stackOfPlatesStruct.push(3);
-        stackOfPlatesStruct.push(9);
-        stackOfPlatesStruct.push(89);
-        System.out.println(stackOfPlatesStruct.pop());
-        System.out.println(stackOfPlatesStruct.pop());
-        System.out.println(stackOfPlatesStruct.pop());
-        stackOfPlatesStruct.push(6);
-        stackOfPlatesStruct.printAllStacks();
-
-
+        StackOfPlatesStruct<Integer> sop = new StackOfPlatesStruct<>(2);
+        sop.push(1);
+        sop.push(2);
+        sop.push(4);
+        sop.push(7);
+        sop.push(8);
+        sop.printStacks();
+        System.out.println(sop.pop());
+        sop.printStacks();
+        System.out.println(sop.pop());
     }
 }
 
-class StackOfPlatesStruct {
-    int actualStack = 0;
-    ArrayList<CustomStack> stacksOfPlates = new ArrayList<>();
-    int maxStackSize = 1;
+class StackOfPlatesStruct<type>{
+    LinkedList<Stack<type>> stacks = new LinkedList<>();
+    int stackMaxSize = 10;
 
-    public StackOfPlatesStruct(int maxStackSize){
-        this.maxStackSize = maxStackSize;
+    public StackOfPlatesStruct(){
+
     }
 
-    public void push(int item){
+    public StackOfPlatesStruct(int stackMaxSize){
+        this.stackMaxSize = stackMaxSize;
+    }
 
-        if(stacksOfPlates.size() == 0) {
-            stacksOfPlates.add(new CustomStack(maxStackSize));
-            if(stacksOfPlates.get(actualStack).canAdd()){
-                stacksOfPlates.get(actualStack).push(item);
+    public void push(type elem){
+        if(stacks.size()>0){
+            Stack<type> actualStack = stacks.peek();
+            if(actualStack.size()+1>stackMaxSize){
+                Stack<type> newStack = new Stack<>();
+                newStack.push(elem);
+                stacks.push(newStack);
             }else{
-                actualStack++;
-                stacksOfPlates.add(actualStack, new CustomStack(maxStackSize));
-                stacksOfPlates.get(actualStack).push(item);
+                actualStack.push(elem);
             }
         }else{
-            if(stacksOfPlates.get(actualStack).canAdd()){
-                stacksOfPlates.get(actualStack).push(item);
-            }else{
-                actualStack++;
-                stacksOfPlates.add(actualStack, new CustomStack(maxStackSize));
-                stacksOfPlates.get(actualStack).push(item);
-            }
+            Stack<type> newStack = new Stack<>();
+            newStack.push(elem);
+            stacks.push(newStack);
         }
     }
 
-    public int pop(){
-        if (stacksOfPlates.get(actualStack).canPop()) {
-            return stacksOfPlates.get(actualStack).pop();
-        }else{
-            if(actualStack-1>=0) {
-                actualStack--;
+    public type pop(){
+        if(stacks.size()!=0){
+            Stack<type> actualStack = stacks.peek();
+            if(!actualStack.isEmpty()) {
+                return actualStack.pop();
             }
-            return stacksOfPlates.get(actualStack).pop();
+            else{
+                stacks.pop();
+                actualStack = stacks.peek();
+                if(actualStack != null) return actualStack.pop();
+            }
         }
+        return null;
     }
 
-    public int popAt(int stackIndex){
-        if(stackIndex>=0 && stackIndex<=actualStack){
-            return stacksOfPlates.get(stackIndex).pop();
-        }else{
-            return -1;
+    public type popAt(int index){
+        if(index>=0 && stacks.get(index) != null){
+            return stacks.get(index).pop();
         }
+        return null;
     }
 
-    public void printAllStacks(){
-        for (int i = 0; i < stacksOfPlates.size(); i++) {
-            System.out.println("----------------- Stack ID: "+i+" -------------------");
-            for (int i1 : stacksOfPlates.get(i).stack) {
-                System.out.println(i1);
-            }
+    public void printStacks(){
+        for (Stack<type> stack : stacks) {
+            System.out.println(Arrays.toString(stack.toArray()));
         }
     }
 
 }
 
-class CustomStack{
 
-    int [] stack;
-    int index = 0;
 
-    public CustomStack(int size){
-        stack = new int[size];
-    }
-
-    public boolean canAdd(){
-        return index<stack.length;
-    }
-
-    public boolean push(int item){
-        if(stack != null && canAdd()) {
-            stack[index] = item;
-            index++;
-            return true;
-        }else{
-            return false;
-        }
-
-    }
-
-    public boolean canPop(){
-        return index > 0;
-    }
-
-    public int pop (){
-        if(stack!=null) {
-
-            if(index-1>=0) {
-                index--;
-            }
-            return stack[index];
-
-        }else{
-            return -1;
-        }
-    }
-
-}

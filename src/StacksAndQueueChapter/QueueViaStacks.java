@@ -5,11 +5,12 @@ import java.util.*;
 public class QueueViaStacks{
 
     public static void main(String [] args){
-        QueueStacks<Integer> queue = new QueueStacks<>();
-        queue.add(1);
-        queue.add(2);
-        queue.add(3);
-        queue.add(4);
+        QueueStacks<Integer> queue = new QueueStacks<>(1,2,3,4,5,6);
+        System.out.println(queue.peek());
+        System.out.println(queue.peek());
+        System.out.println(queue.peek());
+        System.out.println(queue.pop());
+        queue.add(999);
         System.out.println(queue.pop());
     }
 
@@ -18,26 +19,37 @@ public class QueueViaStacks{
 }
 
 class QueueStacks<type>{
-    Deque<type> stack1 = new ArrayDeque<>();
-    Deque<type> stack2 = new ArrayDeque<>();
+    Stack<type> newElements = new Stack<>();
+    Stack<type> holdElements = new Stack<>();
 
     public QueueStacks(){}
+    @SafeVarargs
+    public QueueStacks(type ...elems){
+        for (type elem : elems) {
+            newElements.push(elem);
+        }
+    }
 
-    public void add(type element){
-        if(stack1.isEmpty()){
-            stack2.add(element);
-            while (!stack1.isEmpty()){
-                stack2.add(stack1.peek());
-            }
-        }else{
-            stack1.add(element);
-            while (!stack2.isEmpty()){
-                stack1.add(stack2.peek());
+    public void add(type elem){
+        newElements.push(elem);
+    }
+
+    public type peek(){
+        fill();
+        return holdElements.peek();
+    }
+
+    public type pop(){
+        fill();
+        return holdElements.pop();
+    }
+
+    public void fill(){
+        if(holdElements.isEmpty()) {
+            while (!newElements.isEmpty()) {
+                holdElements.push(newElements.pop());
             }
         }
     }
 
-    public type pop(){
-        return stack1.isEmpty()?stack2.peek():stack1.peek();
-    }
 }
