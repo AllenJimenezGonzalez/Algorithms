@@ -33,6 +33,7 @@ public class Graph<T> {
         if(directed){
             addArc(value,dNode,oNode);
         }
+        dNode.arcsLength++;
         return true;
     }
 
@@ -89,6 +90,7 @@ class GraphNode<T>{
     public GraphArc<T> arcs;
     public GraphNode<T> nextNode;
     public GraphNode<T> prevNode;
+    public int arcsLength=0;
 
     public GraphNode (T value){
         this.value = value;
