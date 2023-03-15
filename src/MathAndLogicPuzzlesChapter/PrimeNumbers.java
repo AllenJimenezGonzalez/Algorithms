@@ -27,7 +27,7 @@ public class PrimeNumbers {
         return next;
     }
 
-    public static boolean[] sieveOfEratostenes(int num) {
+    public static boolean[] sieveOfEratosthenes(int num) {
         boolean[] flags = new boolean[num + 1];
         Arrays.fill(flags, true);
         int prime = 2;
@@ -38,13 +38,13 @@ public class PrimeNumbers {
         return flags;
     }
 
-    public static boolean isPrimeEratostenes(int number) {
-        return sieveOfEratostenes(number)[number];
+    public static boolean isPrimeEratosthenes(int number) {
+        return sieveOfEratosthenes(number)[number];
     }
 
     public static void main(String[] args) {
         System.out.println(isPrime(200));
-        System.out.println(isPrimeEratostenes(200));
+        System.out.println(isPrimeEratosthenes(200));
     }
 
 }
